@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quadro Kanban Interativo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Kanban Interativo</h1>
+    </header>
+
+    <main class="board">
+      <section class="list" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h2>A Fazer</h2>
+        <div class="cards" id="todo"></div>
+        <input
+          type="text"
+          placeholder="Adicionar tarefa..."
+          onkeydown="addCard(event, 'todo')"
+        />
+      </section>
+
+      <section class="list" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h2>Em Progresso</h2>
+        <div class="cards" id="doing"></div>
+        <input
+          type="text"
+          placeholder="Adicionar tarefa..."
+          onkeydown="addCard(event, 'doing')"
+        />
+      </section>
+
+      <section class="list" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h2>Concluído</h2>
+        <div class="cards" id="done"></div>
+        <input
+          type="text"
+          placeholder="Adicionar tarefa..."
+          onkeydown="addCard(event, 'done')"
+        />
+      </section>
+    </main>
+
+    <script>
+      let draggedCard = null;
+      let idCounter = 1;
+
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+
+      function drag(ev) {
+        draggedCard = ev.target;
+        setTimeout(() => {
+          draggedCard.style.display = "none";
+        }, 0);
+      }
+
+      function drop(ev) {
+        ev.preventDefault();
+        const dropZone = ev.target.closest(".cards");
+        if (dropZone && draggedCard) {
+          dropZone.appendChild(draggedCard);
+          draggedCard.style.display = "block";
+          draggedCard = null;
+        }
+      }
+
+      function addCard(event, columnId) {
+        if (event.key === "Enter") {
+          const input = event.target;
+          const text = input.value.trim();
+
+          if (text !== "") {
+            const newCard = document.createElement("div");
+            newCard.className = "card";
+            newCard.textContent = text;
+            newCard.id = `card${idCounter++}`;
+            newCard.setAttribute("draggable", "true");
+            newCard.ondragstart = drag;
+
+            const column = document.getElementById(columnId);
+            column.appendChild(newCard);
+
+            input.value = "";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
